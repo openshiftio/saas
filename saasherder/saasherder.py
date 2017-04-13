@@ -81,7 +81,7 @@ class SaasHerder(object):
           result.append(self.services.get(s))
       return result
 
-  def collect_services(self, services):
+  def collect_services(self, services, dry_run=False):
     """ Pull/download templates from repositories """
     service_list = self.get_services(services)
     for s in service_list:
@@ -92,9 +92,10 @@ class SaasHerder(object):
       if r.status_code != 200:
         raise Exception("Couldn't pull the template.")
       filename = self.get_template_file(s)
-      with open(filename, "w") as fp:
-        fp.write(r.content)
-      print("Template written to %s" % filename)    
+      if not dry_run:
+        with open(filename, "w") as fp:
+          fp.write(r.content)
+        print("Template written to %s" % filename)
 
   def update(self, cmd_type, service, value, output_file=None):
     """ Update service object and write it to file """
@@ -102,13 +103,13 @@ class SaasHerder(object):
     services[0][cmd_type] = value
 
     try:
-      self.collect_services([service])
+      self.collect_services([service], dry_run=True)
     except Exception as e:
       print("Aborting update: %s" % e)
       return  
 
     if not output_file:
-      output_file = self.services_file
+      output_file = os.path.join(self.services_dir, services[0]["file"])
     self.write_service_file(service, output_file)
 
   def process_image_tag(self, services, output_dir):
@@ -136,8 +137,6 @@ class SaasHerder(object):
         if "unknown parameter name" in e.message:
           print("Skipping: Nothing to update")
           pass
-      
-      
 
   def template(self, cmd_type, services, output_dir=None):
     """ Process templates """
@@ -157,13 +156,18 @@ class SaasHerder(object):
     if len(services_list) == 0:
       raise Exception("Unknown serice %s" % services)
 
+    result = []
     for service in services_list:
       if cmd_type in service.keys():
         print(service.get(cmd_type))
+        result.append(service.get(cmd_type))
       elif cmd_type in "template-url":
         print(self.get_raw(service))
+        result.append(self.get_raw(service))
       else:
         raise Exception("Unknown option for %s: %s" % (service["name"], cmd_type))
+
+    return result
 
   def print_objects(self, objects):
     for s in self.services.get("services", []):
