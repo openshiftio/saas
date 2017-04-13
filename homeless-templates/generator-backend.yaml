@@ -1,0 +1,159 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: generator-backend
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      group: io.fabric8
+      project: generator-backend
+      provider: fabric8
+      version: 1.0.33
+    name: generator-backend
+  spec:
+    replicas: 1
+    selector:
+      group: io.fabric8
+      project: generator-backend
+      provider: fabric8
+      version: 1.0.33
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          group: io.fabric8
+          project: generator-backend
+          provider: fabric8
+          version: 1.0.33
+      spec:
+        containers:
+        - env:
+          - name: OPENSHIFT_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: generator-backend
+                key: openshift.api.url
+          - name: KEYCLOAK_SAAS_URL
+            valueFrom:
+              configMapKeyRef:
+                name: generator-backend
+                key: keycloak.saas.url
+          - name: LAUNCHPAD_BACKEND_CATALOG_GIT_REF
+            valueFrom:
+              configMapKeyRef:
+                name: generator-backend
+                key: launchpad.backend.catalog.git.ref
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          image: fabric8/generator-backend:1.0.33
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: forge/version
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: wildfly-swarm
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 9779
+            name: prometheus
+            protocol: TCP
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: forge/version
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources: {}
+          securityContext:
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          workingDir: /home
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        serviceAccount: generator-backend
+        serviceAccountName: generator-backend
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      expose: "true"
+      group: io.fabric8
+      project: generator-backend
+      provider: fabric8
+      version: 1.0.30
+    name: generator-backend
+  spec:
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      group: io.fabric8
+      project: generator-backend
+      provider: fabric8
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: generator-backend
+      group: io.fabric8
+      project: generator-backend
+      provider: fabric8
+      version: 1.0.33
+    name: generator-backend
+  spec:
+    host: ""
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: generator-backend
+      weight: 100
+    wildcardPolicy: None
+  status: {}
