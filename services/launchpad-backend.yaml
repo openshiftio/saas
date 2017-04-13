@@ -1,5 +1,5 @@
 services:
-- name: launchpad-backend
-  hash: a9cf701dfc7af6ca9985a8fa18c0c92ad9fa9465
+- hash: 669a19339ae6bcd311297fb302ab4f140f47c4b4
+  name: launchpad-backend
   path: /openshift/launchpad-backend.app.yaml
   url: https://github.com/openshiftio/launchpad-backend/

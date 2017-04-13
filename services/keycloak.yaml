@@ -1,9 +1,9 @@
 services:
-- name: keycloak
-  url: https://github.com/almighty/keycloak/
+- hash: b810159179a742e2da26940bff124800a7d49f0b
+  name: keycloak
   path: /openshift/keycloak.app.yaml
-  hash: 4718797e5dfb1ae00125968a6ec92a858079df82
-- name: keycloak-postgresql
   url: https://github.com/almighty/keycloak/
+- hash: b810159179a742e2da26940bff124800a7d49f0b
+  name: keycloak-postgresql
   path: /openshift/keycloak-db.app.yaml
-  hash: 4718797e5dfb1ae00125968a6ec92a858079df82
+  url: https://github.com/almighty/keycloak/
