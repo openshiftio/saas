@@ -7,3 +7,4 @@ services:
   name: keycloak-postgresql
   path: /openshift/keycloak-db.app.yaml
   url: https://github.com/almighty/keycloak/
+  skip: True

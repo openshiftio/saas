@@ -113,13 +113,16 @@ class SaasHerder(object):
       output_file = os.path.join(self.services_dir, services[0]["file"])
     self.write_service_file(service, output_file)
 
-  def process_image_tag(self, services, output_dir):
+  def process_image_tag(self, services, output_dir, force=False):
     services_list = self.get_services(services)
     if not find_executable("oc"):
       print("Aborting: Could not find oc binary")
       exit(1)
 
     for s in services_list:
+      if s.get("skip") and not force:
+        print("INFO: Skipping %s, use -f to force processing of all templates" % s.get("name"))
+        continue
       output = ""
       template_file = self.get_template_file(s)
       tag = "latest" if s["hash"] == "master" else s["hash"][:6]
@@ -143,7 +146,7 @@ class SaasHerder(object):
         print("WARNING: Templating failed, copying original file to %s" % output_file)
         pass
 
-  def template(self, cmd_type, services, output_dir=None):
+  def template(self, cmd_type, services, output_dir=None, force=False):
     """ Process templates """
     if not output_dir:
       output_dir = self.templates_dir
@@ -152,7 +155,7 @@ class SaasHerder(object):
         os.mkdir(output_dir) #FIXME
 
     if cmd_type == "tag":
-      self.process_image_tag(services, output_dir)
+      self.process_image_tag(services, output_dir, force)
 
   def get(self, cmd_type, services):
     """ Get information about services printed to stdout """
