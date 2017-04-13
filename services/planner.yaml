@@ -1,0 +1,5 @@
+services:
+- name: planner
+  url: https://github.com/fabric8io/fabric8-planner/
+  path: /openshift/planner.app.yaml
+  hash: 146b85b0e2b3e81e79553489873b29ac601eaac9

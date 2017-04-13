@@ -1,0 +1,187 @@
+import os
+import anymarkup
+import requests
+import copy
+import subprocess
+from distutils.spawn import find_executable
+
+
+class SaasHerder(object):
+  @property
+  def services(self):
+    """ Loads and returns all the services in service dir """
+    if not self._services:
+      self._services = {}
+      self._service_files = {}
+      for f in os.listdir(self.services_dir):
+        service_file = os.path.join(self.services_dir, f)
+        service = anymarkup.parse_file(service_file)
+        for s in service["services"]:
+          s["file"] = f
+          self._services[s["name"]] = s
+          if not self._service_files.get(f):
+            self._service_files[f] = []
+          self._service_files[f].append(s["name"])
+
+    return self._services
+
+  def __init__(self, services_dir, templates_dir):
+    self._services = None
+    self.templates_dir = templates_dir
+    self.services_dir = services_dir
+
+    self.prep_templates_dir()
+
+  def write_service_file(self, name, output=None):
+    """ Writes service file to disk, either to original file name, or to a name given by output param """
+    service_file_cont = {"services": []}
+    for n in self._service_files[self.services[name]["file"]]:
+      dump = copy.deepcopy(self.services[n])
+      filename = dump["file"]
+      del dump["file"]
+      service_file_cont["services"].append(dump)
+      
+    if not output:
+      output = self.services[name]["file"]
+    anymarkup.serialize_file(service_file_cont, output)
+    print("Services written to file %s." % output)
+
+  def prep_templates_dir(self):
+    """ Create a dir to store pulled templates if it does not exist """
+    if not os.path.isdir(self.templates_dir):
+      os.mkdir(self.templates_dir)
+
+  def raw_gitlab(self, service):
+    """ Construct link to raw file in gitlab """
+    return "%s/raw/%s/%s" % (service.get("url").rstrip("/"), service.get("hash"), service.get("path").lstrip("/"))
+
+  def raw_github(self, service):
+    """ Construct link to raw file in github """
+    return "https://raw.githubusercontent.com/%s/%s/%s" % ("/".join(service.get("url").rstrip("/").split("/")[-2:]), service.get("hash"), service.get("path").lstrip("/"))
+
+  def get_raw(self, service):
+    """ Figure out the repo manager and return link to a file """
+    if "github" in service.get("url"):
+      return self.raw_github(service)
+    elif "gitlab" in service.get("url"):
+      return self.raw_gitlab(service)
+  
+  def get_template_file(self, service):
+    """ Return path to a pulled template file """
+    return os.path.join(self.templates_dir, "%s.yaml" % service.get("name"))
+
+  def get_services(self, service_names):
+    """ Return service objects """
+    if service_names == "all":
+     return self.services.values()
+    else:
+      result = []
+      for s in service_names:
+        if self.services.get(s):
+          result.append(self.services.get(s))
+      return result
+
+  def collect_services(self, services):
+    """ Pull/download templates from repositories """
+    service_list = self.get_services(services)
+    for s in service_list:
+      print("Service: %s" % s.get("name"))
+      url = self.get_raw(s)
+      print("Downloading: %s" % self.raw_github(s))
+      r = requests.get(url) #FIXME
+      if r.status_code != 200:
+        raise Exception("Couldn't pull the template.")
+      filename = self.get_template_file(s)
+      with open(filename, "w") as fp:
+        fp.write(r.content)
+      print("Template written to %s" % filename)    
+
+  def update(self, cmd_type, service, value, output_file=None):
+    """ Update service object and write it to file """
+    services = self.get_services([service])
+    services[0][cmd_type] = value
+
+    try:
+      self.collect_services([service])
+    except Exception as e:
+      print("Aborting update: %s" % e)
+      return  
+
+    if not output_file:
+      output_file = self.services_file
+    self.write_service_file(service, output_file)
+
+  def process_image_tag(self, services, output_dir):
+    services_list = self.get_services(services)
+    if not find_executable("oc"):
+      print("Aborting: Could not find oc binary")
+      exit(1)
+    for s in services_list:
+      output = ""
+      template_file = self.get_template_file(s)
+      tag = "latest" if s["hash"] == "master" else s["hash"][:6]
+      parameters = [{"name": "IMAGE_TAG", "value": tag}]
+      service_params = s.get("parameters", {})
+      for key, val in service_params.iteritems():
+        parameters.append({"name": key, "value": val})
+      params_processed = ["%s=%s" % (i["name"], i["value"]) for i in parameters]
+
+      cmd = ["oc", "process", "--output", "yaml", "-f", template_file] + params_processed
+      print(cmd)
+      try:
+        output = subprocess.check_output(cmd) 
+        with open(os.path.join(output_dir, s["file"]), "w") as fp:
+          fp.write(output)
+      except subprocess.CalledProcessError as e:
+        if "unknown parameter name" in e.message:
+          print("Skipping: Nothing to update")
+          pass
+      
+      
+
+  def template(self, cmd_type, services, output_dir=None):
+    """ Process templates """
+    if not output_dir:
+      output_dir = self.templates_dir
+    else:
+      if not os.path.isdir(output_dir):
+        os.mkdir(output_dir) #FIXME
+
+    if cmd_type == "tag":
+      self.process_image_tag(services, output_dir)
+
+  def get(self, cmd_type, services):
+    """ Get information about services printed to stdout """
+    services_list = self.get_services(services)
+
+    if len(services_list) == 0:
+      raise Exception("Unknown serice %s" % services)
+
+    for service in services_list:
+      if cmd_type in service.keys():
+        print(service.get(cmd_type))
+      elif cmd_type in "template-url":
+        print(self.get_raw(service))
+      else:
+        raise Exception("Unknown option for %s: %s" % (service["name"], cmd_type))
+
+  def print_objects(self, objects):
+    for s in self.services.get("services", []):
+      template_file = self.get_template_file(s)
+      template = anymarkup.parse_file(template_file)
+      print(s.get("name"))
+      for o in template.get("objects", []):
+        if o.get("kind") in objects:
+          print("=> %s: %s" % (o.get("kind"), o.get("metadata", {}).get("name")))  
+
+"""
+for o in template.get("objects", []):
+        if o.get("kind") == "DeploymentConfig":
+          for c in o.get("spec").get("template").get("spec").get("containers"):
+            image = c.get("image").split(":")[0] #FIXME imagestreams
+            if image == "":
+              continue
+            image = "%s:%s" % (image, s.get("hash")[0:6])
+            c["image"] = image
+      anymarkup.serialize_file(template, os.path.join(output_dir, "%s.yaml" % s.get("name")))
+"""

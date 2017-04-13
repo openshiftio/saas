@@ -1,0 +1,7 @@
+services:
+- name: che-starter
+  url: https://github.com/redhat-developer/che-starter
+  path: /openshift-template/che-starter.app.yaml
+  hash: 19b6f7c223f7a69ca5fd6020c36d16a4a95a6a5b
+  parameters:
+    IMAGE: registry.devshift.net/almighty/che-starter
