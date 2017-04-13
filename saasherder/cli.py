@@ -29,6 +29,8 @@ if __name__ == "__main__":
     subparser_template = subparsers.add_parser("template")
     #subparser_template.add_argument('--all', default=False, action='store_true',
     #                    help='Perform the action on all services')
+    subparser_template.add_argument('-f', '--force', default=False, action='store_true',
+                        help='Force processing of all templates (i.e. those with skip: True)')
     subparser_template.add_argument('--output-dir', default=None,
                         help='Output directory where the updated templates will be stored')
     subparser_template.add_argument("type", choices=["tag"],
@@ -53,6 +55,6 @@ if __name__ == "__main__":
     elif args.command == "update":
       se.update(args.type, args.service, args.value, output_file=args.output_file)
     elif args.command == "template":
-      se.template(args.type, args.services, args.output_dir)
+      se.template(args.type, args.services, args.output_dir, force=args.force)
     elif args.command == "get":
       se.get(args.type, args.services)
