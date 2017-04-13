@@ -36,6 +36,14 @@ if __name__ == "__main__":
     subparser_template.add_argument("services", nargs="*", default="all",
                                     help="Service which template should be updated")      
 
+    subparser_template = subparsers.add_parser("get")
+    #subparser_template.add_argument('--all', default=False, action='store_true',
+    #                    help='Perform the action on all services')
+    subparser_template.add_argument("type", choices=["path", "url", "hash", "template-url"],
+                                    help="Update image tag with commit hash")
+    subparser_template.add_argument("services", nargs="*", default="all",
+                                    help="Service which template should be updated")
+
     args = parser.parse_args()
 
     se = SaasHerder(args.service_dir, args.templates_dir)
@@ -46,3 +54,5 @@ if __name__ == "__main__":
       se.update(args.type, args.service, args.value, output_file=args.output_file)
     elif args.command == "template":
       se.template(args.type, args.services, args.output_dir)
+    elif args.command == "get":
+      se.get(args.type, args.services)

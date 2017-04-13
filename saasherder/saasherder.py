@@ -23,7 +23,6 @@ class SaasHerder(object):
             self._service_files[f] = []
           self._service_files[f].append(s["name"])
 
-    print(self._service_files)
     return self._services
 
   def __init__(self, services_dir, templates_dir):
@@ -120,20 +119,28 @@ class SaasHerder(object):
     for s in services_list:
       output = ""
       template_file = self.get_template_file(s)
-      cmd = ["oc", "process", "--output", "yaml", "-f", template_file, "IMAGE_TAG=%s" % s["hash"][:6]]
+      tag = "latest" if s["hash"] == "master" else s["hash"][:6]
+      parameters = [{"name": "IMAGE_TAG", "value": tag}]
+      service_params = s.get("parameters", {})
+      for key, val in service_params.iteritems():
+        parameters.append({"name": key, "value": val})
+      params_processed = ["%s=%s" % (i["name"], i["value"]) for i in parameters]
+
+      cmd = ["oc", "process", "--output", "yaml", "-f", template_file] + params_processed
       print(cmd)
       try:
         output = subprocess.check_output(cmd) 
         with open(os.path.join(output_dir, s["file"]), "w") as fp:
           fp.write(output)
       except subprocess.CalledProcessError as e:
-        if e.message.startswith("unknown parameter name"):
+        if "unknown parameter name" in e.message:
           print("Skipping: Nothing to update")
           pass
       
       
 
   def template(self, cmd_type, services, output_dir=None):
+    """ Process templates """
     if not output_dir:
       output_dir = self.templates_dir
     else:
@@ -142,6 +149,21 @@ class SaasHerder(object):
 
     if cmd_type == "tag":
       self.process_image_tag(services, output_dir)
+
+  def get(self, cmd_type, services):
+    """ Get information about services printed to stdout """
+    services_list = self.get_services(services)
+
+    if len(services_list) == 0:
+      raise Exception("Unknown serice %s" % services)
+
+    for service in services_list:
+      if cmd_type in service.keys():
+        print(service.get(cmd_type))
+      elif cmd_type in "template-url":
+        print(self.get_raw(service))
+      else:
+        raise Exception("Unknown option for %s: %s" % (service["name"], cmd_type))
 
   def print_objects(self, objects):
     for s in self.services.get("services", []):
