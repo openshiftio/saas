@@ -4,6 +4,7 @@ import requests
 import copy
 import subprocess
 from distutils.spawn import find_executable
+from shutil import copyfile
 
 
 class SaasHerder(object):
@@ -117,6 +118,7 @@ class SaasHerder(object):
     if not find_executable("oc"):
       print("Aborting: Could not find oc binary")
       exit(1)
+
     for s in services_list:
       output = ""
       template_file = self.get_template_file(s)
@@ -126,17 +128,20 @@ class SaasHerder(object):
       for key, val in service_params.iteritems():
         parameters.append({"name": key, "value": val})
       params_processed = ["%s=%s" % (i["name"], i["value"]) for i in parameters]
-
-      cmd = ["oc", "process", "--output", "yaml", "-f", template_file] + params_processed
-      print(cmd)
+      cmd = ["oc", "process", "--output", "yaml", "-f", template_file]
+      process_cmd = cmd + params_processed
+      print(process_cmd)
+      output_file = os.path.join(output_dir, s["file"])
       try:
-        output = subprocess.check_output(cmd) 
-        with open(os.path.join(output_dir, s["file"]), "w") as fp:
+        output = subprocess.check_output(process_cmd) 
+        with open(output_file, "w") as fp:
           fp.write(output)
       except subprocess.CalledProcessError as e:
-        if "unknown parameter name" in e.message:
-          print("Skipping: Nothing to update")
-          pass
+        output = subprocess.check_output(cmd) 
+        with open(output_file, "w") as fp:
+          fp.write(output)
+        print("WARNING: Templating failed, copying original file to %s" % output_file)
+        pass
 
   def template(self, cmd_type, services, output_dir=None):
     """ Process templates """
