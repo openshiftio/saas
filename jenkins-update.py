@@ -46,7 +46,6 @@ def update(service_dir, output_dir):
     except ValueError as e:
       pass
     finally:
-      print p
       print
 
 for d in service_dirs:
