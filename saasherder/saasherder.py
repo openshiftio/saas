@@ -101,7 +101,11 @@ class SaasHerder(object):
   def update(self, cmd_type, service, value, output_file=None):
     """ Update service object and write it to file """
     services = self.get_services([service])
-    services[0][cmd_type] = value
+    if services[0][cmd_type] == value:
+      print("Skipping update of %s, no change" % service)
+      return
+    else:
+      services[0][cmd_type] = value
 
     try:
       self.collect_services([service], dry_run=True)
