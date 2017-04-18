@@ -6,5 +6,5 @@ services:
 - hash: b810159179a742e2da26940bff124800a7d49f0b
   name: keycloak-postgresql
   path: /openshift/keycloak-db.app.yaml
+  skip: true
   url: https://github.com/almighty/keycloak/
-  skip: True

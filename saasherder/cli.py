@@ -8,9 +8,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-d', '--debug', default=False, action='store_true',
                         help='Run in debug mode')
-    parser.add_argument('-D', '--templates-dir', default="templates",
+    parser.add_argument('-D', '--templates-dir', default="dsaas-templates",
                         help='Output directory where the downloaded templates are be stored')
-    parser.add_argument('-s', '--service-dir', default="services",
+    parser.add_argument('-s', '--service-dir', default="dsaas-services",
                         help='A directory containing services definitions')
     subparsers = parser.add_subparsers(dest="command")
     subparser_pull = subparsers.add_parser("pull")
