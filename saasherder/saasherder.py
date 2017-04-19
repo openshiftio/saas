@@ -58,7 +58,8 @@ class SaasHerder(object):
 
   def raw_github(self, service):
     """ Construct link to raw file in github """
-    return "https://raw.githubusercontent.com/%s/%s/%s" % ("/".join(service.get("url").rstrip("/").split("/")[-2:]), service.get("hash"), service.get("path").lstrip("/"))
+    url = "https://raw.githubusercontent.com/%s/%s/%s" % ("/".join(service.get("url").rstrip("/").split("/")[-2:]), service.get("hash"), service.get("path").lstrip("/"))
+    return url
 
   def get_raw(self, service):
     """ Figure out the repo manager and return link to a file """
@@ -82,14 +83,17 @@ class SaasHerder(object):
           result.append(self.services.get(s))
       return result
 
-  def collect_services(self, services, dry_run=False):
+  def collect_services(self, services, token=None, dry_run=False):
     """ Pull/download templates from repositories """
     service_list = self.get_services(services)
     for s in service_list:
       print("Service: %s" % s.get("name"))
       url = self.get_raw(s)
-      print("Downloading: %s" % self.raw_github(s))
-      r = requests.get(url) #FIXME
+      print("Downloading: %s" % self.get_raw(s))
+      headers={}
+      if token:
+        headers = {"Authorization": "token %s" % token, "Accept": "application/vnd.github.v3.raw"}
+      r = requests.get(url, headers=headers) #FIXME
       if r.status_code != 200:
         raise Exception("Couldn't pull the template.")
       filename = self.get_template_file(s)

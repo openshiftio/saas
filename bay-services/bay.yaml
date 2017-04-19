@@ -1,0 +1,26 @@
+services:
+- hash: 78a9b1a089f5ef945098d6aad0f197e5f456e61d
+  name: bay-core
+  path: /openshift/bayesian-core-template.yaml
+  url: https://github.com/baytemp/common/
+  require_token: true
+- hash: 78a9b1a089f5ef945098d6aad0f197e5f456e61d
+  name: bay-anitya
+  path: /openshift/anitya-template.yaml
+  url: https://github.com/baytemp/common/
+  require_token: true
+- hash: 78a9b1a089f5ef945098d6aad0f197e5f456e61d
+  name: bay-analytics
+  path: /openshift/analytics-template.yaml
+  url: https://github.com/baytemp/common/
+  require_token: true
+- hash: 78a9b1a089f5ef945098d6aad0f197e5f456e61d
+  name: bay-data-importer
+  path: /openshift/data-importer-template.yaml
+  url: https://github.com/baytemp/common/
+  require_token: true
+- hash: 78a9b1a089f5ef945098d6aad0f197e5f456e61d
+  name: bay-gremlin-server
+  path: /openshift/gremlin-server-template.yaml
+  url: https://github.com/baytemp/common/
+  require_token: true
