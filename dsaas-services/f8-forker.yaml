@@ -1,0 +1,5 @@
+services:
+- hash: 62562f02d25e13756913c1a02bbf1916cda662b0
+  name: fabric8-forker
+  path: /openshift/fabric8-forker.app.yaml
+  url: https://github.com/fabric8io/fabric8-forker

@@ -1,5 +1,5 @@
 services:
-- hash: f28adb9880307c540d6764000e59db7713747d1f
+- hash: 3e85ff1203fdf6e2041429213087547e9869a41b
   name: launchpad-missioncontrol
   path: /catapult_os_template.yaml
   url: https://github.com/openshiftio/launchpad-missioncontrol/
