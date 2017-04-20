@@ -2,6 +2,26 @@
 
 This repository holds information about where to find OpenShift templates for the DSaaS.
 
+# Service YAML
+
+```
+services:
+- hash: aab9fc5fa5c24360079998f2209b2b55c3af29ae
+  hash_length: 6
+  name: some-name
+  path: /openshift/template.yaml
+  url: https://github.com/org/repo/
+  parameters:
+    SOME_PARAM: some_value
+```
+
+* *hash*: Commit hash or branch which is used a) for downloading OpenShift template and b) to generate image tag for template processing (`master` is translated to `latest`)
+* *hash_length*: Number of characters to be used from *hash* as an image tag
+* *name*: Name of the service
+* *path*: Path to the template in the repo
+* *url*: URL of the repository which contains the template
+* *parameters*: An object where key is the parameter name and value is the parameter value. These parameters will be added to `oc process` when processing the template
+
 ## Basic Usage
 
 ```
