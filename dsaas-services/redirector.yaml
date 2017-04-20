@@ -1,5 +1,5 @@
 services:
-- hash: 46957399f62dd00f9b40b4b3f005d188263646a9
+- hash: master
   name: redirector
   path: homeless-templates/redirector.yaml
   url: https://github.com/openshiftio/saas/
