@@ -1,13 +1,13 @@
 services:
-- hash: concaf
+- hash: master
   name: gremlin-http
   parameters:
     CHANNELIZER: http
-  path: /openshift/template.yaml
-  url: https://github.com/baytemp/gremlin-openshift/
-- hash: concaf
+  path: /gremlin/openshift/template.yaml
+  url: https://github.com/containscafeine/data-model/
+- hash: master
   name: gremlin-ws
   parameters:
     CHANNELIZER: ws
-  path: /openshift/template.yaml
-  url: https://github.com/baytemp/gremlin-openshift/
+  path: /gremlin/openshift/template.yaml
+  url: https://github.com/containscafeine/data-model/
