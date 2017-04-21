@@ -15,6 +15,7 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest="command")
     subparser_pull = subparsers.add_parser("pull")
     subparser_pull.add_argument('service', nargs="*", default="all")
+    subparser_pull.add_argument('--token', default=None, help="Token to use when pulling from private repo")
 
     subparser_update = subparsers.add_parser("update")
     subparser_update.add_argument('-o', '--output-file', default=None,
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     se = SaasHerder(args.service_dir, args.templates_dir)
     if args.command == "pull":
       if args.service:
-        se.collect_services(args.service)
+        se.collect_services(args.service, args.token)
     elif args.command == "update":
       se.update(args.type, args.service, args.value, output_file=args.output_file)
     elif args.command == "template":
