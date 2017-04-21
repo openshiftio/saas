@@ -1,5 +1,5 @@
 services:
-- hash: d3f110e2cd41b0204121b1b7c25c31faf3b80a2e
+- hash: 76a41a7992a9cbbe49d2584ec24c766787df398a
   hash_length: 7
   name: anitya
   path: /openshift/template.yaml
