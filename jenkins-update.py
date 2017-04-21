@@ -5,7 +5,7 @@ import json
 
 
 
-service_dirs = ["dsaas-services", "launchpad-services"]
+service_dirs = ["dsaas-services"]
 
 def update(service_dir, output_dir):
   builds = []
