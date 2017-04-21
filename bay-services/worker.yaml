@@ -1,0 +1,15 @@
+services:
+- hash: aab9fc5fa5c24360079998f2209b2b55c3af29ae
+  hash_length: 7
+  name: worker-ingestion
+  parameters:
+    WORKER_ADMINISTRATION_REGION: ingestion
+  path: /openshift/template.yaml
+  url: https://github.com/baytemp/worker/
+- hash: aab9fc5fa5c24360079998f2209b2b55c3af29ae
+  hash_length: 7
+  name: worker-api
+  parameters:
+    WORKER_ADMINISTRATION_REGION: api
+  path: /openshift/template.yaml
+  url: https://github.com/baytemp/worker/

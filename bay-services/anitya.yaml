@@ -1,0 +1,6 @@
+services:
+- hash: 76a41a7992a9cbbe49d2584ec24c766787df398a
+  hash_length: 7
+  name: anitya
+  path: /openshift/template.yaml
+  url: https://github.com/bkabrda/anitya-docker/

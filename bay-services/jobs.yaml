@@ -1,0 +1,6 @@
+services:
+- hash: 60ba6dbb51d51ffb848ec0cd4c027e6f4cde6603
+  hash_length: 7
+  name: jobs
+  path: /openshift/template.yaml
+  url: https://github.com/baytemp/jobs/
