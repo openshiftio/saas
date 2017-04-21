@@ -1,5 +1,0 @@
-services:
-- hash: 414be86eacfa0e9c79b83a21b1f98b240f560570
-  name: launchpad-frontend
-  path: /openshift/obsidian-generator-frontend.app.yaml
-  url: https://github.com/openshiftio/launchpad-frontend/
