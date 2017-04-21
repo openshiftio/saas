@@ -13,7 +13,7 @@ objects:
       group: io.fabric8
       project: generator-backend
       provider: fabric8
-      version: 1.0.33
+      version: 1.0.34
     name: generator-backend
   spec:
     replicas: 1
@@ -21,7 +21,7 @@ objects:
       group: io.fabric8
       project: generator-backend
       provider: fabric8
-      version: 1.0.33
+      version: 1.0.34
     strategy:
       resources: {}
       rollingParams:
@@ -38,7 +38,7 @@ objects:
           group: io.fabric8
           project: generator-backend
           provider: fabric8
-          version: 1.0.33
+          version: 1.0.34
       spec:
         containers:
         - env:
@@ -62,7 +62,7 @@ objects:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.namespace
-          image: fabric8/generator-backend:1.0.33
+          image: fabric8/generator-backend:1.0.34
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 10
@@ -144,7 +144,7 @@ objects:
       group: io.fabric8
       project: generator-backend
       provider: fabric8
-      version: 1.0.33
+      version: 1.0.34
     name: generator-backend
   spec:
     host: ""
