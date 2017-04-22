@@ -3,8 +3,3 @@ services:
   name: keycloak
   path: /openshift/keycloak.app.yaml
   url: https://github.com/almighty/keycloak/
-- hash: 18c4b3795e761c5440a4fa6f095dc3b6b6d655e6
-  name: keycloak-postgresql
-  path: /openshift/keycloak-db.app.yaml
-  skip: true
-  url: https://github.com/almighty/keycloak/
