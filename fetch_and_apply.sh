@@ -21,8 +21,8 @@ function prep {
 }
 
 function oc_apply {
-	echo cat $1 | oc apply -f -
-	cp $f last_applied/
+	cat $1 | oc apply -f -
+	cp $1 last_applied/
 }
 
 
