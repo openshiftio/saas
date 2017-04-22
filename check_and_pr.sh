@@ -3,6 +3,9 @@
 # this script relies on github.com/openshiftio/saas set as remote: upstream
 # and a local checkout with origin mapped to a github repo
 
+# note that this does create a local state dir
+# so best to run this from one place
+
 which hub 2>&1 > /dev/null
 if [ $? -ne 0 ]; then
 	echo 'need hub from hub.github.com installed'
