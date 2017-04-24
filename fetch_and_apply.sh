@@ -23,7 +23,6 @@ function prep {
 
 function oc_apply {
     oc --config=${CONF} apply -f $1
-    cp $1 last_applied/
 }
 
 
@@ -45,17 +44,7 @@ python saasherder/cli.py -D ${TPLDIR}/ -s dsaas-services/ \
        template --output-dir $TSTAMP tag
 
 for f in `ls $TSTAMP/*`; do
-    if [ -e last_applied/$(basename $f) ]; then
-        difflines=$(diff -uNr $f last_applied/$(basename $f) | wc -l )
-        if [ ${difflines} -lt 1 ]; then
-            rm -f $f
-        else
-            # not the same file
-            oc_apply $f
-        fi
-    else
-        oc_apply $f
-    fi
+    oc_apply $f
 done
 
 if [ $(find ${TSTAMP}/ -name \*.yaml | wc -l ) -lt 1 ]; then
