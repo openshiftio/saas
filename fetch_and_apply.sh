@@ -62,4 +62,3 @@ if [ $(find ${TSTAMP}/ -name \*.yaml | wc -l ) -lt 1 ]; then
     rm -rf $TSTAMP
     echo "R: Nothing to apply"
 fi
-
