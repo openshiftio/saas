@@ -26,8 +26,13 @@ function oc_apply {
 }
 
 
-# get some basics in place
-prep
+# get some basics in place, no prep in prod deploy
+if [ ! -e ~/.kube/cfg-dsaas ] ; then
+	# this is a dev machine
+	prep
+else
+	alias oc="/usr/bin/oc --config=../../.kube/cfg-dsaas"
+fi
 
 # lets clear this out to make sure we always have a 
 # fresh set of templates, and nothing else left behind
