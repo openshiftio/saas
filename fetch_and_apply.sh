@@ -2,6 +2,7 @@
 
 TSTAMP=$(date +%Y%m%d_%H%M%S)
 TPLDIR="dsaas-templates"
+CONF="/home/`whoami`/.kube/config"
 
 function git_prep {
     # should also check that the git master co is clean
@@ -21,7 +22,7 @@ function prep {
 }
 
 function oc_apply {
-    cat $1 | oc apply -f -
+    oc --config=${CONF} apply -f $1
     cp $1 last_applied/
 }
 
@@ -31,7 +32,7 @@ if [ ! -e ~/.kube/cfg-dsaas ] ; then
     # this is a dev machine
     prep
 else
-    alias oc="/usr/bin/oc --config=../../.kube/cfg-dsaas"
+    CONF="/home/`whoami`/.kube/cfg-dsaas"
 fi
 
 # lets clear this out to make sure we always have a 
