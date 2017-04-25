@@ -65,3 +65,9 @@ python jenkins-update.py
 ```
 
 You can easily check updated services with `git diff`
+
+
+## dsaas-tracking-services
+these are tracking services that we are not deploying via saas, but come via another pipeline
+we still need to track where to get the content, and the ver deployed 
+
