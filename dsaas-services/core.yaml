@@ -1,5 +1,5 @@
 services:
-- hash: a7c72a4292c543bce5fec00d9a39c65fbd7d8603
+- hash: 8e825e2921a9e851b7d1fe95030d6a00f0961dee
   name: core
   path: /openshift/core.app.yaml
   url: https://github.com/almighty/almighty-core/
