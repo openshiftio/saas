@@ -40,7 +40,7 @@ function pull_tag {
     # fresh set of templates, and nothing else left behind
     rm -rf ${TEMPLATE_DIR}; mkdir -p ${TEMPLATE_DIR}
 
-    if [ -e ../${GROUP}-gh-token-`whoami` ]; then GH_TOKEN=" --token "$(cat ../${GROUP}-gh-token-`whoami`); fi
+    if [ -e /home/`whoami`/${GROUP}-gh-token-`whoami` ]; then GH_TOKEN=" --token "$(cat /home/`whoami`/${GROUP}-gh-token-`whoami`); fi
 
     python saasherder/cli.py -D ${TEMPLATE_DIR}/ -s ${GROUP}-services/ pull $GH_TOKEN
 
