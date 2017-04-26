@@ -4,6 +4,8 @@ TSTAMP=$(date +%Y%m%d_%H%M%S)
 TPLDIR="dsaas-templates"
 CONF="/home/`whoami`/.kube/config"
 
+SAAS_GROUPS="dsaas:dsaas-production bay:bayesian-preview"
+
 function git_prep {
     # should also check that the git master co is clean
     git checkout master
@@ -11,44 +13,67 @@ function git_prep {
 }
 
 function prep {
-    git_prep
+    local PROJECT=$1
+    #git_prep
 
     TOK=$(cat ../osd-dsaas-token-`whoami`)
     oc login https://api.dsaas.openshift.com --token=${TOK}
     if [ $? -ne 0 ]; then echo "E: unable to login to openshift"; exit 2 ;fi
 
-    oc project dsaas-production
-    if [ $? -ne 0 ]; then echo "E: unable to get oc project"; exit 3 ;fi
+    oc project ${PROJECT}
+    if [ $? -ne 0 ]; then echo "E: unable to get oc project ${PROJECT}"; exit 3 ;fi
 }
 
 function oc_apply {
-    oc --config=${CONF} apply -f $1
+    config=""
+    [ -n "${CONF}" ] && config="--config=${CONF}"
+    oc $config apply -f $1
 }
 
+function pull_tag {
+    local GROUP=$1
+    local PROCESSED_DIR=$2
 
-# get some basics in place, no prep in prod deploy
-if [ ! -e ~/.kube/cfg-dsaas ] ; then
-    # this is a dev machine
-    prep
-else
-    CONF="/home/`whoami`/.kube/cfg-dsaas"
-fi
+    local TEMPLATE_DIR=${GROUP}-templates
 
-# lets clear this out to make sure we always have a 
-# fresh set of templates, and nothing else left behind
-rm -rf ${TPLDIR}; mkdir -p ${TPLDIR}
+    # lets clear this out to make sure we always have a
+    # fresh set of templates, and nothing else left behind
+    rm -rf ${TEMPLATE_DIR}; mkdir -p ${TEMPLATE_DIR}
 
-python saasherder/cli.py -D ${TPLDIR}/ -s dsaas-services/ pull
-mkdir -p $TSTAMP
-python saasherder/cli.py -D ${TPLDIR}/ -s dsaas-services/ \
-       template --output-dir $TSTAMP tag
+    if [ -e ../${GROUP}-gh-token-`whoami` ]; then GH_TOKEN=" --token "$(cat ../${GROUP}-gh-token-`whoami`); fi
 
-for f in `ls $TSTAMP/*`; do
-    oc_apply $f
+    python saasherder/cli.py -D ${TEMPLATE_DIR}/ -s ${GROUP}-services/ pull $GH_TOKEN
+
+    python saasherder/cli.py -D ${TEMPLATE_DIR}/ -s ${GROUP}-services/ \
+        template --output-dir ${PROCESSED_DIR} tag
+}
+
+for g in `echo ${SAAS_GROUPS}`; do
+    # get some basics in place, no prep in prod deploy
+    GROUP=${g%%:*}
+    PROJECT=${g##*:}
+
+    CONF="/home/`whoami`/.kube/cfg-${GROUP}"
+    if [ ! -e ${CONF} ] ; then
+        # this is a dev machine
+        prep ${PROJECT}
+        CONF=""
+    fi
+
+    TSTAMPDIR=${GROUP}-${TSTAMP}
+    mkdir -p ${TSTAMPDIR}
+
+    pull_tag ${GROUP} $TSTAMPDIR
+
+    for f in `ls $TSTAMPDIR/*`; do
+        oc_apply $f
+    done
+
+    if [ $(find ${TSTAMPDIR}/ -name \*.yaml | wc -l ) -lt 1 ]; then
+        # if we didnt apply anything, dont keep the dir around
+        rm -rf $TSTAMPDIR
+        echo "R: Nothing to apply"
+    fi
 done
 
-if [ $(find ${TSTAMP}/ -name \*.yaml | wc -l ) -lt 1 ]; then
-    # if we didnt apply anything, dont keep the dir around
-    rm -rf $TSTAMP
-    echo "R: Nothing to apply"
-fi
+
