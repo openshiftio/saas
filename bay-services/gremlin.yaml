@@ -1,13 +1,8 @@
 services:
-- hash: master
+- hash: 1.2.0
   name: gremlin-http
   parameters:
     CHANNELIZER: http
-  path: /gremlin/openshift/template.yaml
-  url: https://github.com/containscafeine/data-model/
-- hash: master
-  name: gremlin-ws
-  parameters:
-    CHANNELIZER: ws
+    REST_VALUE: 1
   path: /gremlin/openshift/template.yaml
   url: https://github.com/containscafeine/data-model/
