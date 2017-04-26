@@ -14,7 +14,7 @@ function git_prep {
 
 function prep {
     local PROJECT=$1
-    #git_prep
+    git_prep
 
     TOK=$(cat ../osd-dsaas-token-`whoami`)
     oc login https://api.dsaas.openshift.com --token=${TOK}
