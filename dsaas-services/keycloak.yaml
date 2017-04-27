@@ -1,5 +1,5 @@
 services:
-- hash: 06913bd6053efb7d77e8dfa00e9ba86e868908c6
+- hash: b61886c8ced2e0034a1162f7244d23f5ae0a391c
   name: keycloak
   path: /openshift/keycloak.app.yaml
   url: https://github.com/almighty/keycloak/
