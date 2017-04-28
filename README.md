@@ -2,6 +2,18 @@
 
 This repository holds information about where to find OpenShift templates for the DSaaS.
 
+# The Process
+
+This repository not only contains references to all OpenShift templates for DSaaS, but also serves to enforce promote-to-prod process for our service. Whole process is as follows:
+
+1. Code is checked in project git repository (e.g. new commit `abcd1234`)
+2. CI build is kicked off (e.g. for the commit `abcd1234`)
+3. If the build is successful, image tagged with commit hash is pushed to repository (e.g. `core:abcd12`)
+4. New image is deployed to stagin cluster (e.g. `oc process -f openshift/template.yaml IMAGE_TAG=abcd12 | oc apply -f -`)
+5. New deployment is verified & PR, which changes commit hash for the given service, is created for this repository (e.g. `hash:` is updated in dsaas-services/core.yaml)
+6. Merge the PR (i.e. this is the **promote-to-prod** manual step)
+7. Once merged, CI job is kicked off, which deploys new version to production (e.g. checkout a template from git repo for a given commit hash, process it with `$IMAGE_TAG` and perform `oc apply`)
+
 # Service YAML
 
 ```
