@@ -1,84 +1,118 @@
+---
 apiVersion: v1
 kind: Template
 metadata:
-  creationTimestamp: null
+  labels:
+    provider: fabric8
+    project: generator-backend
+    version: 1.0.41
+    group: io.fabric8
   name: generator-backend
 objects:
 - apiVersion: v1
-  kind: DeploymentConfig
+  kind: ServiceAccount
   metadata:
-    creationTimestamp: null
-    generation: 1
     labels:
+      provider: fabric8
+      project: generator-backend
+      version: 1.0.41
       group: io.fabric8
+    name: generator-backend
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      fabric8.io/git-commit: 0188ba9241018cf3cd5cc7630d97e3201b405eb9
+      fabric8.io/scm-con-url: scm:git:git://github.com/fabric8io/generator-backend.git
+      prometheus.io/port: "9779"
+      fabric8.io/scm-url: http://github.com/fabric8io/generator-backend
+      fabric8.io/issue-system: JIRA
+      fabric8.io/issue-tracker-url: https://issues.jboss.org/
+      fabric8.io/git-branch: release-v1.0.41
+      prometheus.io/scrape: "true"
+      fabric8.io/scm-devcon-url: scm:git:git@github.com:fabric8io/generator-backend.git
+      fabric8.io/scm-tag: HEAD
+    labels:
+      expose: "true"
+      provider: fabric8
+      project: generator-backend
+      version: 1.0.41
+      group: io.fabric8
+    name: generator-backend
+  spec:
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
       project: generator-backend
       provider: fabric8
-      version: 1.0.34
+      group: io.fabric8
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      fabric8.io/git-commit: 0188ba9241018cf3cd5cc7630d97e3201b405eb9
+      fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=generator-backend&var-version=1.0.41
+      fabric8.io/scm-con-url: scm:git:git://github.com/fabric8io/generator-backend.git
+      fabric8.io/scm-url: http://github.com/fabric8io/generator-backend
+      fabric8.io/issue-system: JIRA
+      fabric8.io/issue-tracker-url: https://issues.jboss.org/
+      fabric8.io/git-branch: release-v1.0.41
+      fabric8.io/scm-devcon-url: scm:git:git@github.com:fabric8io/generator-backend.git
+      fabric8.io/scm-tag: HEAD
+    labels:
+      provider: fabric8
+      project: generator-backend
+      version: 1.0.41
+      group: io.fabric8
     name: generator-backend
   spec:
     replicas: 1
     selector:
-      group: io.fabric8
       project: generator-backend
       provider: fabric8
-      version: 1.0.34
-    strategy:
-      resources:
-        requests:
-          cpu: 50m
-          memory: 2Gi
-        limits:
-          cpu: 500m
-          memory: 4Gi
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 600
-        updatePeriodSeconds: 1
-      type: Rolling
+      version: 1.0.41
+      group: io.fabric8
     template:
       metadata:
-        creationTimestamp: null
+        annotations:
+          fabric8.io/git-commit: 0188ba9241018cf3cd5cc7630d97e3201b405eb9
+          fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=generator-backend&var-version=1.0.41
+          fabric8.io/scm-con-url: scm:git:git://github.com/fabric8io/generator-backend.git
+          fabric8.io/scm-url: http://github.com/fabric8io/generator-backend
+          fabric8.io/issue-system: JIRA
+          fabric8.io/issue-tracker-url: https://issues.jboss.org/
+          fabric8.io/git-branch: release-v1.0.41
+          fabric8.io/scm-devcon-url: scm:git:git@github.com:fabric8io/generator-backend.git
+          fabric8.io/scm-tag: HEAD
         labels:
-          group: io.fabric8
-          project: generator-backend
           provider: fabric8
-          version: 1.0.34
+          project: generator-backend
+          version: 1.0.41
+          group: io.fabric8
       spec:
         containers:
         - env:
           - name: OPENSHIFT_API_URL
-            valueFrom:
-              configMapKeyRef:
-                name: generator-backend
-                key: openshift.api.url
+            value: ${OPENSHIFT_API_URL}
           - name: KEYCLOAK_SAAS_URL
-            valueFrom:
-              configMapKeyRef:
-                name: generator-backend
-                key: keycloak.saas.url
+            value: ${KEYCLOAK_SAAS_URL}
           - name: LAUNCHPAD_BACKEND_CATALOG_GIT_REF
-            valueFrom:
-              configMapKeyRef:
-                name: generator-backend
-                key: launchpad.backend.catalog.git.ref
+            value: devtools-saas
           - name: KUBERNETES_NAMESPACE
             valueFrom:
               fieldRef:
-                apiVersion: v1
                 fieldPath: metadata.namespace
-          image: fabric8/generator-backend:1.0.34
+          image: fabric8/generator-backend:1.0.41
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 10
             httpGet:
               path: forge/version
               port: 8080
-              scheme: HTTP
             initialDelaySeconds: 120
-            periodSeconds: 10
-            successThreshold: 1
             timeoutSeconds: 3
           name: wildfly-swarm
           ports:
@@ -92,73 +126,21 @@ objects:
             name: jolokia
             protocol: TCP
           readinessProbe:
-            failureThreshold: 3
             httpGet:
               path: forge/version
               port: 8080
-              scheme: HTTP
             initialDelaySeconds: 3
-            periodSeconds: 10
-            successThreshold: 1
             timeoutSeconds: 3
           securityContext:
             privileged: false
-          terminationMessagePath: /dev/termination-log
           workingDir: /home
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        securityContext: {}
-        serviceAccount: generator-backend
         serviceAccountName: generator-backend
-        terminationGracePeriodSeconds: 30
-    test: false
     triggers:
     - type: ConfigChange
-  status: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    creationTimestamp: null
-    labels:
-      expose: "true"
-      group: io.fabric8
-      project: generator-backend
-      provider: fabric8
-      version: 1.0.30
-    name: generator-backend
-  spec:
-    ports:
-    - name: http
-      port: 8080
-      protocol: TCP
-      targetPort: 8080
-    selector:
-      group: io.fabric8
-      project: generator-backend
-      provider: fabric8
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Route
-  metadata:
-    creationTimestamp: null
-    labels:
-      app: generator-backend
-      group: io.fabric8
-      project: generator-backend
-      provider: fabric8
-      version: 1.0.34
-    name: generator-backend
-  spec:
-    host: ""
-    tls:
-      insecureEdgeTerminationPolicy: Redirect
-      termination: edge
-    to:
-      kind: Service
-      name: generator-backend
-      weight: 100
-    wildcardPolicy: None
-  status: {}
+parameters:
+- name: FORGE_URL
+  value: forge.api.prod-preview.openshift.io
+- name: OPENSHIFT_API_URL
+  value: https://api.free-int.openshift.com
+- name: KEYCLOAK_SAAS_URL
+  value: https://sso.prod-preview.openshift.io
