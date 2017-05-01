@@ -1,5 +1,5 @@
 services:
-- hash: 5d1dc20dccefc8851bd575988837708982f0bae7
+- hash: e8723a141bd2eed59acd2880cc3cbcad8ba9ea2d
   name: www.openshift.io
   path: /openshift/www.openshift.io.app.yaml
   url: https://github.com/openshiftio/openshift.io
