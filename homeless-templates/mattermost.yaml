@@ -1,0 +1,136 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: mattermost
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: mattermost
+  spec:
+    replicas: 1
+    selector:
+      name: mattermost
+    strategy:
+      recreateParams:
+        timeoutSeconds: 600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          name: mattermost
+      spec:
+        containers:
+        - env:
+          - name: MM_DB_HOST
+            valueFrom:
+              secretKeyRef:
+                key: mm-db-host
+                name: mattermost
+          - name: MM_DB_PORT
+            valueFrom:
+              secretKeyRef:
+                key: mm-db-port
+                name: mattermost
+          - name: MM_DB_USER
+            valueFrom:
+              secretKeyRef:
+                key: mm-db-user
+                name: mattermost
+          - name: MM_DB_PASS
+            valueFrom:
+              secretKeyRef:
+                key: mm-db-pass
+                name: mattermost
+          - name: MM_DB_NAME
+            valueFrom:
+              secretKeyRef:
+                key: mm-db-name
+                name: mattermost
+          - name: MM_USE_S3
+            value: "true"
+          - name: MM_S3_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: mm-s3-key-id
+                name: mattermost
+          - name: MM_S3_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: mm-s3-key
+                name: mattermost
+          - name: MM_S3_BUCKET
+            valueFrom:
+              secretKeyRef:
+                key: mm-s3-bucket
+                name: mattermost
+          image: registry.centos.org/mattermost/mattermost-team:3.8
+          imagePullPolicy: Always
+          name: mattermost
+          ports:
+          - containerPort: 8065
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /opt/mattermost/config
+            name: mattermost-config
+          - mountPath: /opt/mattermost/logs
+            name: mattermost-logs
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8065
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8065
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: mattermost-config
+          persistentVolumeClaim:
+            claimName: mattermost-config
+        - name: mattermost-logs
+          persistentVolumeClaim:
+            claimName: mattermost-logs
+    test: false
+    triggers:
+    - type: ConfigChange
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: mattermost
+  spec:
+    ports:
+    - name: mattermost
+      port: 8065
+      protocol: TCP
+      targetPort: 8065
+    selector:
+      name: mattermost
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}

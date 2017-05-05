@@ -1,0 +1,5 @@
+services:
+- hash: master
+  name: mattermost
+  path: homeless-templates/mattermost.yaml
+  url: https://github.com/openshiftio/saas/
