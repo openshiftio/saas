@@ -1,6 +1,6 @@
 services:
-- hash: 754a395896878688c3742837b8cbadb76a3dca4d
+- hash: 4fb7c275ebf89fbb886691740c547d43106369b5
   hash_length: 7
   name: jobs
   path: /openshift/template.yaml
-  url: https://github.com/baytemp/jobs/
+  url: https://github.com/fabric8-analytics/fabric8-analytics-jobs/
