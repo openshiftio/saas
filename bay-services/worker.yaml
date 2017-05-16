@@ -1,15 +1,15 @@
 services:
-- hash: 5155de8ee92cf2be70cab3c9885dc83758f48bc3
+- hash: 3dcb74ac0a83380a9ec078d28a3a620f5cbdc14c
   hash_length: 7
   name: worker-ingestion
   parameters:
     WORKER_ADMINISTRATION_REGION: ingestion
   path: /openshift/template.yaml
-  url: https://github.com/baytemp/worker/
-- hash: 5155de8ee92cf2be70cab3c9885dc83758f48bc3
+  url: https://github.com/fabric8-analytics/fabric8-analytics-worker/
+- hash: 3dcb74ac0a83380a9ec078d28a3a620f5cbdc14c
   hash_length: 7
   name: worker-api
   parameters:
     WORKER_ADMINISTRATION_REGION: api
   path: /openshift/template.yaml
-  url: https://github.com/baytemp/worker/
+  url: https://github.com/fabric8-analytics/fabric8-analytics-worker/
