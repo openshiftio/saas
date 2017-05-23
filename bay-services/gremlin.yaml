@@ -1,5 +1,6 @@
 services:
 - hash: 70802ca28a75b0a2184c577f48e9c382910614b0
+  hash_length: 7
   name: gremlin-http
   parameters:
     CHANNELIZER: http
