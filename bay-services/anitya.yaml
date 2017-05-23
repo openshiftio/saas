@@ -1,6 +1,6 @@
 services:
-- hash: 76a41a7992a9cbbe49d2584ec24c766787df398a
+- hash: e0714d5437dea0a67754048b6d27696c6594e74c
   hash_length: 7
   name: anitya
   path: /openshift/template.yaml
-  url: https://github.com/bkabrda/anitya-docker/
+  url: https://github.com/fabric8-analytics/anitya-docker/

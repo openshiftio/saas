@@ -1,8 +1,8 @@
 services:
-- hash: 1.2.0
+- hash: 70802ca28a75b0a2184c577f48e9c382910614b0
   name: gremlin-http
   parameters:
     CHANNELIZER: http
     REST_VALUE: 1
-  path: /gremlin/openshift/template.yaml
-  url: https://github.com/containscafeine/data-model/
+  path: /openshift/template.yaml
+  url: https://github.com/fabric8-analytics/gremlin-docker/
