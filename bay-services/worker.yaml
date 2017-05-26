@@ -1,5 +1,5 @@
 services:
-- hash: b430403d9d7f98d9d692dfd76e7a397c93230148
+- hash: b8f17039aa5c44000d2e02b033f77570735d16c4
   hash_length: 7
   name: worker-ingestion
   parameters:
@@ -7,7 +7,7 @@ services:
     REPLICAS: 6
   path: /openshift/template.yaml
   url: https://github.com/fabric8-analytics/fabric8-analytics-worker/
-- hash: b430403d9d7f98d9d692dfd76e7a397c93230148
+- hash: b8f17039aa5c44000d2e02b033f77570735d16c4
   hash_length: 7
   name: worker-api
   parameters:
