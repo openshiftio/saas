@@ -144,8 +144,8 @@ class SaasHerder(object):
       params_processed = ["%s=%s" % (i["name"], i["value"]) for i in parameters]
       cmd = ["oc", "process", "--output", "yaml", "-f", template_file]
       process_cmd = cmd + params_processed
-      print(process_cmd)
-      output_file = os.path.join(output_dir, s["file"])
+      output_file = os.path.join(output_dir, "%s.yaml" % s["name"])
+      print("%s > %s" % (process_cmd, output_file))
       try:
         output = subprocess.check_output(process_cmd) 
         with open(output_file, "w") as fp:
