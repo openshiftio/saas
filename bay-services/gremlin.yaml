@@ -1,5 +1,5 @@
 services:
-- hash: c32456619985b24909a78acc71fb92bc7e823d7d
+- hash: 89876a983028eeb785a0cedb4fbc6a57f056e419 
   hash_length: 7
   name: gremlin-http
   parameters:
