@@ -4,7 +4,7 @@ services:
   name: worker-ingestion
   parameters:
     WORKER_ADMINISTRATION_REGION: ingestion
-    REPLICAS: 30
+    REPLICAS: 45
   path: /openshift/template.yaml
   url: https://github.com/fabric8-analytics/fabric8-analytics-worker/
 - hash: 2c221a4651895bf641d0892dfd4a586523cd37de
