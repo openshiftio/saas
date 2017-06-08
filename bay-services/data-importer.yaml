@@ -2,5 +2,7 @@ services:
 - hash: 3116b187f2a397973f9f5e974db4281a57b87fd7
   hash_length: 7
   name: data-importer
+  parameters:
+    REPLICAS: 2
   path: /openshift/template.yaml
   url: https://github.com/baytemp/data-model/
