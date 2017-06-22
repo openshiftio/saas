@@ -1,5 +1,5 @@
 services:
-- hash: 7a634523c93b4b746351908b30c7d682d967b36f
+- hash: ff86704cd717b1166111c4176c6b2777e05b7de6
   name: che-starter
   parameters:
     IMAGE: registry.devshift.net/almighty/che-starter
