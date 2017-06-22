@@ -1,5 +1,5 @@
 services:
-- hash: 3116b187f2a397973f9f5e974db4281a57b87fd7
+- hash: ba80fd15e23a1ea645f49e49d3a46cbd17f21d48
   hash_length: 7
   name: data-importer
   path: /openshift/template.yaml
