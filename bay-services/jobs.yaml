@@ -1,5 +1,5 @@
 services:
-- hash: 72a57d091584a115f0bfd2268d4b5b52c2f291ac
+- hash: 74a4ed25d8b55b878d99b183bd7a26a50410dce2
   hash_length: 7
   name: jobs
   path: /openshift/template.yaml
