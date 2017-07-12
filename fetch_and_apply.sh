@@ -4,7 +4,7 @@ TSTAMP=$(date +%Y%m%d_%H%M%S)
 TPLDIR="dsaas-templates"
 CONF="/home/`whoami`/.kube/config"
 
-SAAS_GROUPS="dsaas:dsaas-production bay:bayesian-preview keycloak:dsaas-keycloak"
+SAAS_GROUPS="dsaas:dsaas-production keycloak:dsaas-keycloak"
 
 function git_prep {
     # should also check that the git master co is clean
