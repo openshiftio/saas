@@ -1,3 +1,18 @@
+<aside class="notice">
+  Do not submit any PRs against this repository!
+</aside>
+
+
+Tracking has been split into following repos:
+
+* https://github.com/openshiftio/saas-openshiftio
+* https://github.com/openshiftio/saas-analytics
+
+Saasherder tool code lives here
+
+* https://github.com/openshiftio/saasherder/
+
+
 # SaaS
 
 This repository holds information about where to find OpenShift templates for the DSaaS.
