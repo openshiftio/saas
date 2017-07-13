@@ -1,7 +1,4 @@
-<aside class="notice">
-  Do not submit any PRs against this repository!
-</aside>
-
+# Do not submit any PRs against this repository!
 
 Tracking has been split into following repos:
 
@@ -12,6 +9,7 @@ Saasherder tool code lives here
 
 * https://github.com/openshiftio/saasherder/
 
+------
 
 # SaaS
 
