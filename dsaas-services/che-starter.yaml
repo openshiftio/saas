@@ -1,5 +1,5 @@
 services:
-- hash: fbf6f32db7c72eab72a02e8217ad85d2cfe94987
+- hash: fec818b4257b77143bd793af788cb23123a0c563
   hash_length: 7
   name: che-starter
   parameters:
