@@ -133,9 +133,7 @@ class SaasHerder(object):
         continue
       output = ""
       template_file = self.get_template_file(s)
-      l = 6 #How many chars to use from hash
-      if s.get("hash_length"):
-        l = s.get("hash_length")
+      l = s.get("hash_length", 7)  #How many chars to use from hash
       tag = "latest" if s["hash"] == "master" else s["hash"][:l]
       parameters = [{"name": "IMAGE_TAG", "value": tag}]
       service_params = s.get("parameters", {})
